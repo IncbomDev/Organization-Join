@@ -7,10 +7,6 @@ export async function inviteUserToOrg(username: string, orgPassword: string): Pr
     const token = process.env.GITHUB_TOKEN;
     const expectedPassword = process.env.ORGANIZATION_PASSWORD;
 
-    console.log("org:", org);
-    console.log("token:", token);
-    console.log("expectedPassword:", expectedPassword);
-
     if (expectedPassword && orgPassword !== expectedPassword) {
         return { success: false, error: 'Invalid organization password' };
     }
@@ -21,7 +17,8 @@ export async function inviteUserToOrg(username: string, orgPassword: string): Pr
     const userRes = await fetch(`https://api.github.com/users/${username}`, {
         headers: {
             'Authorization': `Bearer ${token}`,
-            'Accept': 'application/vnd.github+json'
+            'Accept': 'application/vnd.github+json',
+            'User-Agent': 'SpikeStudents-App'
         }
     });
 
@@ -29,7 +26,9 @@ export async function inviteUserToOrg(username: string, orgPassword: string): Pr
         return { success: false, error: `User not found or GitHub API error (${userRes.status})` };
     }
 
-    const userData = await userRes.json() as { id: number };
+    const userData = await userRes.json();
+
+    // @ts-expect-error
     const userId = userData.id;
 
     // 2. Invite user by ID
@@ -39,6 +38,7 @@ export async function inviteUserToOrg(username: string, orgPassword: string): Pr
             'Authorization': `Bearer ${token}`,
             'Accept': 'application/vnd.github+json',
             'Content-Type': 'application/json',
+            'User-Agent': 'SpikeStudents-App'
         },
         body: JSON.stringify({
             invitee_id: userId,
@@ -49,7 +49,8 @@ export async function inviteUserToOrg(username: string, orgPassword: string): Pr
     if (inviteRes.ok) {
         return { success: true };
     } else {
-        const error = await inviteRes.json() as { message?: string };
+        const error = await inviteRes.json();
+        // @ts-ignore
         return { success: false, error: error.message || 'Failed to invite user' };
     }
 }
