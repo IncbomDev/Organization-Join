@@ -2,6 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+    env: {
+        GITHUB_ORGANIZATION: process.env.GITHUB_ORGANIZATION,
+        GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+        ORGANIZATION_PASSWORD: process.env.ORGANIZATION_PASSWORD,
+    }
 };
 
 export default nextConfig;

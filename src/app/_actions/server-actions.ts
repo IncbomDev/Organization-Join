@@ -7,6 +7,10 @@ export async function inviteUserToOrg(username: string, orgPassword: string): Pr
     const token = process.env.GITHUB_TOKEN;
     const expectedPassword = process.env.ORGANIZATION_PASSWORD;
 
+    console.log("org:", org);
+    console.log("token:", token);
+    console.log("expectedPassword:", expectedPassword);
+
     if (expectedPassword && orgPassword !== expectedPassword) {
         return { success: false, error: 'Invalid organization password' };
     }
